@@ -1,0 +1,136 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextLabel = Instance.new("TextLabel")
+local Buttony1 = Instance.new("ImageButton")
+local Buttony2 = Instance.new("ImageButton")
+
+--Properties:
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.ResetOnSpawn = false
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(173, 0, 2)
+Frame.BackgroundTransparency = 0.500
+Frame.Position = UDim2.new(0.0786948204, 0, 0.24791418, 0)
+Frame.Size = UDim2.new(0, 238, 0, 423)
+Frame.Draggable = true
+Frame.Active = true
+Frame.Selectable = true
+
+TextLabel.Parent = Frame
+TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.Size = UDim2.new(0, 238, 0, 55)
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.Text = "Blockate Fucked"
+TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.TextSize = 44.000
+TextLabel.TextStrokeTransparency = 0.860
+
+Buttony1.Name = "Buttony1"
+Buttony1.Parent = Frame
+Buttony1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Buttony1.Position = UDim2.new(0.117647067, 0, 0.245862886, 0)
+Buttony1.Size = UDim2.new(0, 182, 0, 100)
+Buttony1.Image = "rbxassetid://6671630682"
+
+Buttony2.Name = "Buttony2"
+Buttony2.Parent = Frame
+Buttony2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Buttony2.Position = UDim2.new(0.117647067, 0, 0.595744729, 0)
+Buttony2.Size = UDim2.new(0, 182, 0, 100)
+Buttony2.Image = "rbxassetid://6671630682"
+
+Buttony1.MouseButton1Down:Connect(function()
+	local RunService = game:GetService("RunService")
+	local StarterGui = game:GetService("StarterGui")
+	local Players = game:GetService("Players")
+	local Player = Players.LocalPlayer
+	local Character = Player.Character
+	local Blocks = workspace:WaitForChild("Blocks"):GetChildren()
+
+	RunService.RenderStepped:Connect(function()
+		settings().Physics.AllowSleep = false; 
+		settings().Physics.ThrottleAdjustTime = math.huge-math.huge;
+		sethiddenproperty(Player, "SimulationRadius", math.huge); 
+		sethiddenproperty(Player, "MaximumSimulationRadius", math.huge) 
+	end)
+
+	for _,v in pairs(Blocks) do
+		if not v.Anchored then
+			v.Position = Character:WaitForChild("HumanoidRootPart").Position
+			StarterGui:SetCore("SendNotification", {
+				Title = "Notification";
+				Text = "Successfully teleported Part.";
+				Icon = "rbxassetid://6671630689";
+				Duration = 1;
+			})
+		end
+	end
+end)
+
+Buttony2.MouseButton1Down:Connect(function()
+local RunService = game:GetService("RunService")
+local StarterGui = game:GetService("StarterGui")
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local Character = Player.Character
+local Blocks = workspace:WaitForChild("Blocks"):GetChildren()
+local Mouse = Player:GetMouse()
+
+-- Global variables
+getgenv().Toggled = false; getgenv().KeyBind = "P";
+
+RunService.RenderStepped:Connect(function()
+    settings().Physics.AllowSleep = false; 
+    settings().Physics.ThrottleAdjustTime = math.huge-math.huge;
+    sethiddenproperty(Player, "SimulationRadius", math.huge); 
+    sethiddenproperty(Player, "MaximumSimulationRadius", math.huge) 
+end)
+
+for _,v in pairs(Blocks) do
+    if not v.Anchored then
+        local BodyThrust = Instance.new("BodyThrust", v)
+        BodyThrust.Force = Vector3.new(1000, 0, 1000)
+        BodyThrust.Location = v.Position
+
+        RunService.RenderStepped:Connect(function()
+            if getgenv().Toggled then
+                v.Position = Mouse.Hit.p
+
+                if Mouse.Target then
+                    if Players:FindFirstChild(Mouse.Target.Parent.Name) then
+                        v.Position = Mouse.Target.Position
+                    end
+                end
+            end
+        end)
+    end
+end
+
+UserInputService.InputBegan:Connect(function(Key)
+    if Key.KeyCode == Enum.KeyCode[getgenv().KeyBind:upper()] and not UserInputService:GetFocusedTextBox() then
+        if getgenv().Toggled then
+            getgenv().Toggled = false
+        elseif not getgenv().Toggled then
+            getgenv().Toggled = true
+        end
+    end
+end)
+end)
+
+local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+				Title = "BEF Loaded";
+				Text = "Cum in disguise.";
+				Icon = "rbxassetid://6671630689";
+				Duration = 5;
+			})
